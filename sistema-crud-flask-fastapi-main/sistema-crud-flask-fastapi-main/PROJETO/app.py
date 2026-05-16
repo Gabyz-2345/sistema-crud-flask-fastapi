@@ -134,7 +134,82 @@ with col4:
         df = pd.DataFrame(st.session_state.nomes)
         df.to_csv("usuarios.csv", index=False)
         st.success("Arquivo CSV gerado!")
+st.markdown("---")
 
+st.markdown("## 🎮 Área Gamer")
+
+g1, g2, g3, g4 = st.columns(4)
+
+with g1:
+    desktop = st.button("🖥 Desktop Gamer")
+
+with g2:
+    headset = st.button("🎧 Headset")
+
+with g3:
+    mouse = st.button("🖱 Mouse Gamer")
+
+with g4:
+    teclado = st.button("⌨ Teclado Mecânico")
+
+
+if desktop:
+
+    st.markdown("""
+    <div class='card'>
+    <h4>🖥 Desktop Gamer</h4>
+
+    ✅ Disponíveis: 4<br>
+    ❌ Emprestados: 2<br><br>
+
+    👤 João — 12/05/2026<br>
+    👤 Maria — 14/05/2026
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+if headset:
+
+    st.markdown("""
+    <div class='card'>
+    <h4>🎧 Headset Gamer</h4>
+
+    ✅ Disponíveis: 3<br>
+    ❌ Emprestados: 1<br><br>
+
+    👤 Pedro — 15/05/2026
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+if mouse:
+
+    st.markdown("""
+    <div class='card'>
+    <h4>🖱 Mouse Gamer</h4>
+
+    ✅ Disponíveis: 7<br>
+    ❌ Emprestados: 0
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+if teclado:
+
+    st.markdown("""
+    <div class='card'>
+    <h4>⌨ Teclado Mecânico</h4>
+
+    ✅ Disponíveis: 5<br>
+    ❌ Emprestados: 1<br><br>
+
+    👤 Ana — 10/05/2026
+
+    </div>
+    """, unsafe_allow_html=True)
 st.markdown("---")
 
 # ===== LISTA =====
