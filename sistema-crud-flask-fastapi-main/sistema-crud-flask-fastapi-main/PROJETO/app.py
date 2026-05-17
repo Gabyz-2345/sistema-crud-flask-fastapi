@@ -24,9 +24,9 @@ if "nomes" not in st.session_state:
     st.session_state.nomes = carregar()
 
 if "selected" not in st.session_state:
+    st.session_state.selected = None
 
-    if "estoque" not in st.session_state:
-
+if "estoque" not in st.session_state:
     st.session_state.estoque = {
         "Desktop Gamer": 100,
         "Headset Gamer": 100,
@@ -35,191 +35,100 @@ if "selected" not in st.session_state:
     }
 
 if "emprestimos" not in st.session_state:
-
     st.session_state.emprestimos = []
-    st.session_state.selected = None
 
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap');
 
 body {
     background-color: #e8f5e9;
     font-family: 'Poppins', sans-serif;
 }
 
-h1 {
-    color: #1b5e20;
+.title {
+    font-family: 'Playfair Display', serif;
+    font-size: 45px;
     text-align: center;
-    font-size: 38px;
-    font-weight: 700;
+    color: #1b5e20;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #444;
+    margin-bottom: 30px;
 }
 
 .card {
     background: white;
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 6px 18px rgba(0,0,0,0.12);
+    border-radius: 18px;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.10);
     margin-bottom: 20px;
 }
 
 .user {
-    padding: 10px;
-    margin: 6px 0;
-    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
     background: #f5fff5;
-    border-left: 5px solid #2e7d32;
+    border-left: 6px solid #2e7d32;
 }
 
 .selected {
-    padding: 10px;
-    margin: 6px 0;
-    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
     background: #c8e6c9;
-    border-left: 5px solid #1b5e20;
+    border-left: 6px solid #1b5e20;
     font-weight: bold;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.10);
 }
 
 div.stButton > button {
-    border-radius: 10px;
-    background-color: #2e7d32;
+    border-radius: 15px;
+    background-color: #6a1b9a;
     color: white;
-    font-weight: 600;
+    font-weight: bold;
+    border: none;
+    padding: 10px;
     width: 100%;
+    transition: 0.2s;
 }
 
 div.stButton > button:hover {
-    background-color: #1b5e20;
-    transform: scale(1.02);
-    transition: 0.2s;
+    background-color: #4a148c;
+    transform: scale(1.03);
 }
+
+input {
+    border-radius: 12px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("<div class='title'>Cadastro de Usuários</div>", unsafe_allow_html=True)
 
-st.title("Sistema de Cadastro de Usuários")
+st.markdown(
+    "<div class='subtitle'>Sistema Gamer de Controle e Empréstimos</div>",
+    unsafe_allow_html=True
+)
 
-# ===== BUSCA =====
 busca = st.text_input("🔍 Buscar usuário")
 
-st.markdown("### Estatísticas")
-st.info(f"Total de usuários: {len(st.session_state.nomes)}")
+st.markdown("### 📊 Estatísticas")
+st.info(f"Total de usuários cadastrados: {len(st.session_state.nomes)}")
 
 st.markdown("---")
 
-# ===== CADASTRO =====
-st.markdown("### Cadastro")
+st.markdown("## 👤 Cadastro")
 
-nome = st.text_input("Digite o nome do usuário")
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-   with col1:
-    if st.button("💾 Salvar"):
-
-        if nome.strip():
-
-            novo_id = len(st.session_state.nomes) + 1
-
-            st.session_state.nomes.append({
-                "id": novo_id,
-                "nome": nome.strip()
-            })
-
-            st.session_state.emprestimos.append({
-                "nome": nome_gamer,
-                "equipamento": equipamento,
-                "data": str(data)
-            })
-
-            st.session_state.estoque[equipamento] -= 1
-
-            salvar(st.session_state.nomes)
-
-            st.rerun()
-
-with col2:
-    if st.button("Editar"):
-        if st.session_state.selected is not None and nome.strip():
-            st.session_state.nomes[st.session_state.selected]["nome"] = nome.strip()
-            salvar(st.session_state.nomes)
-            st.session_state.selected = None
-            st.rerun()
-
-  with col3:
-    if st.button("🗑 Excluir"):
-
-        if st.session_state.selected is not None:
-
-            nome_removido = st.session_state.nomes[st.session_state.selected]["nome"]
-
-            for emprestimo in st.session_state.emprestimos:
-
-                if emprestimo["nome"] == nome_removido:
-
-                    equipamento = emprestimo["equipamento"]
-
-                    st.session_state.estoque[equipamento] += 1
-
-                    st.session_state.emprestimos.remove(emprestimo)
-
-                    break
-
-            st.session_state.nomes.pop(st.session_state.selected)
-
-            salvar(st.session_state.nomes)
-
-            st.session_state.selected = None
-
-            st.rerun()
-
-with col4:
-    if st.button("Exportar CSV"):
-        df = pd.DataFrame(st.session_state.nomes)
-        df.to_csv("usuarios.csv", index=False)
-        st.success("Arquivo CSV gerado!")
-
-st.markdown("## 📦 Estoque Gamer")
-
-c1, c2, c3, c4 = st.columns(4)
-
-with c1:
-    st.markdown(f"""
-    <div class='card' style='border-top:5px solid #7b1fa2;'>
-    <h4>🖥 Desktop</h4>
-    <h2>{st.session_state.estoque['Desktop Gamer']}</h2>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c2:
-    st.markdown(f"""
-    <div class='card' style='border-top:5px solid #8e24aa;'>
-    <h4>🎧 Headset</h4>
-    <h2>{st.session_state.estoque['Headset Gamer']}</h2>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c3:
-    st.markdown(f"""
-    <div class='card' style='border-top:5px solid #6a1b9a;'>
-    <h4>🖱 Mouse</h4>
-    <h2>{st.session_state.estoque['Mouse Gamer']}</h2>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c4:
-    st.markdown(f"""
-    <div class='card' style='border-top:5px solid #4a148c;'>
-    <h4>⌨ Teclado</h4>
-    <h2>{st.session_state.estoque['Teclado Mecânico']}</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-st.markdown("---")
-
-st.markdown("## 🎮 Área Gamer")
+nome = st.text_input("Nome do usuário")
+senha = st.text_input("Senha", type="password")
 
 equipamento = st.selectbox(
     "🎮 Escolha o equipamento",
@@ -231,86 +140,154 @@ equipamento = st.selectbox(
     ]
 )
 
-nome_gamer = st.text_input("👤 Nome da pessoa")
-
 data = st.date_input("📅 Data do empréstimo")
 
-g1, g2, g3, g4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
 
-with g1:
-    desktop = st.button("🖥 Desktop Gamer")
+with col1:
 
-with g2:
-    headset = st.button("🎧 Headset")
+    if st.button("💾 Salvar"):
 
-with g3:
-    mouse = st.button("🖱 Mouse Gamer")
+        if nome.strip() and senha.strip():
 
-with g4:
-    teclado = st.button("⌨ Teclado Mecânico")
+            if st.session_state.estoque[equipamento] > 0:
 
+                novo_id = len(st.session_state.nomes) + 1
 
-if desktop:
+                st.session_state.nomes.append({
+                    "id": novo_id,
+                    "nome": nome.strip(),
+                    "senha": senha.strip()
+                })
 
-    st.markdown("""
-    <div class='card'>
-    <h4>🖥 Desktop Gamer</h4>
+                st.session_state.emprestimos.append({
+                    "nome": nome.strip(),
+                    "equipamento": equipamento,
+                    "data": str(data)
+                })
 
-    ✅ Disponíveis: 4<br>
-    ❌ Emprestados: 2<br><br>
+                st.session_state.estoque[equipamento] -= 1
 
-    👤 João — 12/05/2026<br>
-    👤 Maria — 14/05/2026
+                salvar(st.session_state.nomes)
 
-    </div>
-    """, unsafe_allow_html=True)
+                st.success("Usuário cadastrado com sucesso!")
 
+                st.rerun()
 
-if headset:
+            else:
+                st.error("Equipamento indisponível.")
 
-    st.markdown("""
-    <div class='card'>
-    <h4>🎧 Headset Gamer</h4>
+with col2:
 
-    ✅ Disponíveis: 3<br>
-    ❌ Emprestados: 1<br><br>
+    if st.button("✏️ Editar"):
 
-    👤 Pedro — 15/05/2026
+        if st.session_state.selected is not None:
 
-    </div>
-    """, unsafe_allow_html=True)
+            if nome.strip():
 
+                st.session_state.nomes[st.session_state.selected]["nome"] = nome.strip()
 
-if mouse:
+                salvar(st.session_state.nomes)
 
-    st.markdown("""
-    <div class='card'>
-    <h4>🖱 Mouse Gamer</h4>
+                st.success("Usuário editado!")
 
-    ✅ Disponíveis: 7<br>
-    ❌ Emprestados: 0
+                st.rerun()
 
-    </div>
-    """, unsafe_allow_html=True)
+with col3:
 
+    if st.button("🗑 Excluir"):
 
-if teclado:
+        if st.session_state.selected is not None:
 
-    st.markdown("""
-    <div class='card'>
-    <h4>⌨ Teclado Mecânico</h4>
+            nome_removido = st.session_state.nomes[st.session_state.selected]["nome"]
 
-    ✅ Disponíveis: 5<br>
-    ❌ Emprestados: 1<br><br>
+            for emprestimo in st.session_state.emprestimos:
 
-    👤 Ana — 10/05/2026
+                if emprestimo["nome"] == nome_removido:
 
-    </div>
-    """, unsafe_allow_html=True)
+                    equipamento_removido = emprestimo["equipamento"]
+
+                    st.session_state.estoque[equipamento_removido] += 1
+
+                    st.session_state.emprestimos.remove(emprestimo)
+
+                    break
+
+            st.session_state.nomes.pop(st.session_state.selected)
+
+            salvar(st.session_state.nomes)
+
+            st.session_state.selected = None
+
+            st.success("Usuário removido!")
+
+            st.rerun()
+
+with col4:
+
+    if st.button("📁 Exportar CSV"):
+
+        df = pd.DataFrame(st.session_state.nomes)
+
+        df.to_csv("usuarios.csv", index=False)
+
+        st.success("Arquivo CSV gerado!")
+
 st.markdown("---")
 
-# ===== LISTA =====
-st.markdown("### Lista de usuários")
+st.markdown("## 🎮 Estoque Gamer")
+
+c1, c2, c3, c4 = st.columns(4)
+
+with c1:
+    st.markdown(f"""
+    <div class='card' style='border-top:6px solid #7b1fa2'>
+    <h4>🖥 Desktop</h4>
+    <h2>{st.session_state.estoque['Desktop Gamer']}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+with c2:
+    st.markdown(f"""
+    <div class='card' style='border-top:6px solid #8e24aa'>
+    <h4>🎧 Headset</h4>
+    <h2>{st.session_state.estoque['Headset Gamer']}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+with c3:
+    st.markdown(f"""
+    <div class='card' style='border-top:6px solid #6a1b9a'>
+    <h4>🖱 Mouse</h4>
+    <h2>{st.session_state.estoque['Mouse Gamer']}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+with c4:
+    st.markdown(f"""
+    <div class='card' style='border-top:6px solid #4a148c'>
+    <h4>⌨ Teclado</h4>
+    <h2>{st.session_state.estoque['Teclado Mecânico']}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+
+st.markdown("## 📋 Empréstimos")
+
+for item in st.session_state.emprestimos:
+
+    st.markdown(f"""
+    <div class='card'>
+    👤 <b>{item['nome']}</b><br><br>
+    🎮 Equipamento: {item['equipamento']}<br>
+    📅 Data: {item['data']}
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+
+st.markdown("## 👥 Lista de usuários")
 
 for i, user in enumerate(st.session_state.nomes):
 
@@ -321,10 +298,21 @@ for i, user in enumerate(st.session_state.nomes):
         continue
 
     if st.session_state.selected == i:
-        st.markdown(f"<div class='selected'>#{user_id} - 👤 {nome_user}</div>", unsafe_allow_html=True)
+
+        st.markdown(
+            f"<div class='selected'>#{user_id} - 👤 {nome_user}</div>",
+            unsafe_allow_html=True
+        )
+
     else:
-        st.markdown(f"<div class='user'>#{user_id} - 👤 {nome_user}</div>", unsafe_allow_html=True)
+
+        st.markdown(
+            f"<div class='user'>#{user_id} - 👤 {nome_user}</div>",
+            unsafe_allow_html=True
+        )
 
     if st.button("Selecionar", key=f"sel_{i}"):
+
         st.session_state.selected = i
+
         st.rerun()
